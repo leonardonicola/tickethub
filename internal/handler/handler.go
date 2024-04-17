@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/pt_BR"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -10,16 +9,16 @@ import (
 )
 
 var (
-	log   *config.Logger
-	trans ut.Translator
+	log      *config.Logger
+	trans    ut.Translator
+	validate *validator.Validate
 )
 
 func InitHandler() {
 	log = config.NewLogger()
-	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
-		portuguese := pt_BR.New()
-		uni := ut.New(portuguese, portuguese)
-		trans, _ = uni.GetTranslator("pt_BR")
-		pt_translations.RegisterDefaultTranslations(v, trans)
-	}
+	portuguese := pt_BR.New()
+	validate = validator.New()
+	uni := ut.New(portuguese, portuguese)
+	trans, _ = uni.GetTranslator("pt_BR")
+	pt_translations.RegisterDefaultTranslations(validate, trans)
 }
