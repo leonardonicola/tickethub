@@ -1,2 +1,2 @@
-# hotelhub
-Booking de hoteis!
+# Tickethub
+Serviço de ingressos e tickets!
