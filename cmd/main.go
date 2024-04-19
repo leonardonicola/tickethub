@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
+	"log"
+
 	_ "github.com/leonardonicola/tickethub/docs"
 	"github.com/leonardonicola/tickethub/internal/router"
 )
@@ -23,8 +24,10 @@ import (
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
-	r := gin.Default()
-	router.InitRoutes(r)
+	r, err := router.InitRoutes()
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
 	if err := r.Run(":3000"); err != nil {
 		panic(err.Error())
 	}

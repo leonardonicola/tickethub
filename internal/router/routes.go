@@ -1,6 +1,7 @@
 package router
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,14 +12,15 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func InitRoutes(router *gin.Engine) {
+func InitRoutes() (*gin.Engine, error) {
+	router := gin.Default()
 	handler.InitHandler()
 	prefix := "/api/v1"
 
 	middleware, err := InitAuthMiddleware()
 
 	if err != nil {
-		log.Fatalf("authMiddleware error: %v", err)
+		return nil, fmt.Errorf("authMiddleware error: %v", err)
 	}
 
 	// Handles not found routes
@@ -38,4 +40,6 @@ func InitRoutes(router *gin.Engine) {
 		v1.GET("/refresh_token", middleware.RefreshHandler)
 		v1.POST("/logout", middleware.LogoutHandler)
 	}
+
+	return router, nil
 }
