@@ -10,9 +10,17 @@ import (
 
 var (
 	log      *config.Logger
-	trans    ut.Translator
 	validate *validator.Validate
+	trans    ut.Translator
 )
+
+func Validate(dto interface{}) validator.ValidationErrorsTranslations {
+	errs := validate.Struct(dto)
+	if errs != nil {
+		return errs.(*validator.ValidationErrors).Translate(trans)
+	}
+	return nil
+}
 
 func InitHandler() {
 	log = config.NewLogger()

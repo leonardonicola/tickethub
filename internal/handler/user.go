@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/leonardonicola/tickethub/internal/dto"
 )
@@ -22,9 +21,9 @@ func RegisterHandler(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
 	}
-	errs := validate.Struct(request)
+	errs := Validate(request)
 	if errs != nil {
-		ctx.AbortWithStatusJSON(http.StatusBadRequest, errs.(validator.ValidationErrors).Translate(trans))
+		ctx.AbortWithStatusJSON(http.StatusBadRequest, errs)
 		return
 	}
 	res := dto.CreateUserOutputDTO{
