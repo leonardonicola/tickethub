@@ -14,7 +14,7 @@ import (
 
 func InitAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 	// Load godot to retrieve variables from .env
-	err := godotenv.Load()
+	err := godotenv.Load("../../.env")
 	if err != nil {
 		return nil, err
 	}
