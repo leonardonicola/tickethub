@@ -3,8 +3,10 @@ package main
 import (
 	"log"
 
+	"github.com/joho/godotenv"
+	"github.com/leonardonicola/tickethub/config"
 	_ "github.com/leonardonicola/tickethub/docs"
-	"github.com/leonardonicola/tickethub/internal/router"
+	"github.com/leonardonicola/tickethub/pkg/router"
 )
 
 //	@title			Tickethub
@@ -24,7 +26,12 @@ import (
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
 func main() {
+	if err := godotenv.Load(".env"); err != nil {
+		log.Fatalf("env variables: %v", err)
+	}
+	config.InitDB()
 	r, err := router.InitRoutes()
+	// Load godot to retrieve variables from .env
 	if err != nil {
 		log.Fatalf("%v", err)
 	}
