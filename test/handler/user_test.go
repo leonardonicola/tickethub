@@ -8,8 +8,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/leonardonicola/tickethub/internal/dto"
-	"github.com/leonardonicola/tickethub/internal/router"
+	"github.com/leonardonicola/tickethub/internal/user/dto"
+	"github.com/leonardonicola/tickethub/pkg/router"
 )
 
 func TestUserHandler(t *testing.T) {
