@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/leonardonicola/tickethub/config"
 	_ "github.com/leonardonicola/tickethub/docs"
-	"github.com/leonardonicola/tickethub/pkg/router"
+	"github.com/leonardonicola/tickethub/internal/pkg/router"
 )
 
 //	@title			Tickethub
@@ -25,17 +25,27 @@ import (
 
 // @externalDocs.description	OpenAPI
 // @externalDocs.url			https://swagger.io/resources/open-api/
+var (
+	logger *config.Logger
+)
+
 func main() {
+	logger = config.NewLogger()
 	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("env variables: %v", err)
+		logger.Fatalf("env variables: %v", err)
+		os.Exit(1)
 	}
+	// TODO: return error on intializations and give os.Exit(1)
 	config.InitDB()
+	config.InitS3Client()
 	r, err := router.InitRoutes()
 	// Load godot to retrieve variables from .env
 	if err != nil {
-		log.Fatalf("%v", err)
+		logger.Fatalf("ROUTER error: %v", err)
+		os.Exit(1)
 	}
 	if err := r.Run(":3000"); err != nil {
-		panic(err.Error())
+		logger.Fatalf("HTTP ROUTER: %v", err)
+		os.Exit(1)
 	}
 }

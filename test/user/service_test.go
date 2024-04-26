@@ -3,9 +3,9 @@ package user_test
 import (
 	"testing"
 
-	"github.com/leonardonicola/tickethub/internal/user/domain"
-	"github.com/leonardonicola/tickethub/internal/user/dto"
-	"github.com/leonardonicola/tickethub/internal/user/usecase"
+	"github.com/leonardonicola/tickethub/internal/modules/user/domain"
+	"github.com/leonardonicola/tickethub/internal/modules/user/dto"
+	"github.com/leonardonicola/tickethub/internal/modules/user/usecase"
 )
 
 type MockRepository struct{}

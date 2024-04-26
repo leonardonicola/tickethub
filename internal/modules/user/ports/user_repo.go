@@ -1,6 +1,6 @@
 package ports
 
-import "github.com/leonardonicola/tickethub/internal/user/domain"
+import "github.com/leonardonicola/tickethub/internal/modules/user/domain"
 
 type UserRepository interface {
 	Create(user *domain.User) (*domain.User, error)

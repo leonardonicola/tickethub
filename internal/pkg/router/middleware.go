@@ -8,8 +8,8 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/leonardonicola/tickethub/config"
-	user "github.com/leonardonicola/tickethub/internal/user/domain"
-	userDTO "github.com/leonardonicola/tickethub/internal/user/dto"
+	user "github.com/leonardonicola/tickethub/internal/modules/user/domain"
+	userDTO "github.com/leonardonicola/tickethub/internal/modules/user/dto"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -75,7 +75,7 @@ func InitAuthMiddleware() (*jwt.GinJWTMiddleware, error) {
 				"message": message,
 			})
 		},
-		TokenLookup: "header: Authorization, query: token",
+		TokenLookup: "header: Authorization",
 		// TokenLookup: "cookie:token",
 
 		// TokenHeadName is a string in the header. Default value is "Bearer"

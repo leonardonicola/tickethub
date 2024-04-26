@@ -1,9 +1,9 @@
 package usecase
 
 import (
-	"github.com/leonardonicola/tickethub/internal/user/domain"
-	"github.com/leonardonicola/tickethub/internal/user/dto"
-	"github.com/leonardonicola/tickethub/internal/user/ports"
+	"github.com/leonardonicola/tickethub/internal/modules/user/domain"
+	"github.com/leonardonicola/tickethub/internal/modules/user/dto"
+	"github.com/leonardonicola/tickethub/internal/modules/user/ports"
 )
 
 type RegisterUseCase struct {

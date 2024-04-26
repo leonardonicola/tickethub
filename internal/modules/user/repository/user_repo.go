@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/leonardonicola/tickethub/config"
-	"github.com/leonardonicola/tickethub/internal/user/domain"
+	"github.com/leonardonicola/tickethub/internal/modules/user/domain"
 	"golang.org/x/crypto/bcrypt"
 )
 

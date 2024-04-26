@@ -1,5 +1,24 @@
 basePath: /api/v1
 definitions:
+  dto.CreateEventOutputDTO:
+    properties:
+      address:
+        type: string
+      age_rating:
+        type: integer
+      date:
+        type: string
+      description:
+        type: string
+      genre:
+        type: string
+      id:
+        type: string
+      poster_url:
+        type: string
+      title:
+        type: string
+    type: object
   dto.CreateUserOutputDTO:
     properties:
       address:
@@ -15,6 +34,25 @@ definitions:
       surname:
         type: string
     type: object
+  dto.GetManyEventsOutputDTO:
+    properties:
+      address:
+        type: string
+      age_rating:
+        type: integer
+      date:
+        type: string
+      description:
+        type: string
+      genre:
+        type: string
+      id:
+        type: string
+      poster_url:
+        type: string
+      title:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -28,6 +66,45 @@ info:
   title: Tickethub
   version: "1.0"
 paths:
+  /event:
+    get:
+      description: Get events base on title search
+      parameters:
+      - description: Search
+        in: query
+        name: search
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/dto.GetManyEventsOutputDTO'
+            type: array
+        "406":
+          description: Not Acceptable
+        "500":
+          description: Internal Server Error
+      summary: Get many events
+      tags:
+      - event
+    post:
+      consumes:
+      - application/json
+      description: Create an show/event/festival/concert
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateEventOutputDTO'
+      summary: Create Event
+      tags:
+      - event
   /register:
     post:
       consumes:
@@ -40,6 +117,10 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/dto.CreateUserOutputDTO'
+        "400":
+          description: Bad Request
+        "500":
+          description: Internal Server Error
       summary: Register
       tags:
       - auth

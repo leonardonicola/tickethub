@@ -8,10 +8,9 @@ import (
 	jwt "github.com/appleboy/gin-jwt/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/leonardonicola/tickethub/config"
-	userHandler "github.com/leonardonicola/tickethub/internal/user/handler"
-	userRepo "github.com/leonardonicola/tickethub/internal/user/repository"
-	userUC "github.com/leonardonicola/tickethub/internal/user/usecase"
-	"github.com/leonardonicola/tickethub/pkg/validation"
+	eventRoutes "github.com/leonardonicola/tickethub/internal/modules/event/route"
+	userRoutes "github.com/leonardonicola/tickethub/internal/modules/user/route"
+	"github.com/leonardonicola/tickethub/internal/pkg/validation"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
@@ -23,9 +22,11 @@ var (
 func InitRoutes() (*gin.Engine, error) {
 	logger = config.NewLogger()
 	router := gin.Default()
+	// 8 MB - left shift operator - 8 x (2 elevado a 20)
+	router.MaxMultipartMemory = 8 << 20
 	prefix := "/api/v1"
 
-	middleware, err := InitAuthMiddleware()
+	authMiddleware, err := InitAuthMiddleware()
 
 	if err != nil {
 		logger.Errorf("authMiddleware error: %v", err)
@@ -38,27 +39,26 @@ func InitRoutes() (*gin.Engine, error) {
 	}
 
 	// Handles not found routes
-	router.NoRoute(middleware.MiddlewareFunc(), func(ctx *gin.Context) {
+	router.NoRoute(authMiddleware.MiddlewareFunc(), func(ctx *gin.Context) {
 		claims := jwt.ExtractClaims(ctx)
 		log.Printf("NoRoute Claims: %v\n", claims)
 		ctx.JSON(http.StatusNotFound, gin.H{"code": "PAGE_NOT_FOUND", "message": "Page not found"})
 	})
 
-	userRepo := userRepo.NewUserRepository(config.GetDB())
-	userUc := userUC.RegisterUseCase{
-		Repository: userRepo,
-	}
-	userHdlr := userHandler.NewUserHandler(userUc)
+	userHandlers := userRoutes.SetupUserRoutes()
+	eventHandlers := eventRoutes.SetupEventRoutes()
 
 	v1 := router.Group(prefix)
-	v1.POST("/login", middleware.LoginHandler)
-	v1.POST("/register", userHdlr.RegisterHandler)
+	v1.POST("/login", authMiddleware.LoginHandler)
+	v1.POST("/register", userHandlers.RegisterHandler)
 	v1.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	// With auth middleware
-	v1.Use(middleware.MiddlewareFunc())
+	v1.Use(authMiddleware.MiddlewareFunc())
 	{
-		v1.GET("/refresh_token", middleware.RefreshHandler)
-		v1.POST("/logout", middleware.LogoutHandler)
+		v1.GET("/refresh_token", authMiddleware.RefreshHandler)
+		v1.POST("/logout", authMiddleware.LogoutHandler)
+		v1.POST("/event", eventHandlers.CreateEventHandler)
+		v1.GET("/event", eventHandlers.GetManyHandler)
 	}
 
 	return router, nil

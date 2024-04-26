@@ -5,9 +5,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/leonardonicola/tickethub/config"
-	"github.com/leonardonicola/tickethub/internal/user/dto"
-	"github.com/leonardonicola/tickethub/internal/user/usecase"
-	"github.com/leonardonicola/tickethub/pkg/validation"
+	"github.com/leonardonicola/tickethub/internal/modules/user/dto"
+	"github.com/leonardonicola/tickethub/internal/modules/user/usecase"
+	"github.com/leonardonicola/tickethub/internal/pkg/validation"
 )
 
 var (
@@ -31,6 +31,8 @@ func NewUserHandler(regUc usecase.RegisterUseCase) *UserHandler {
 // @Accept			json
 // @Produce		json
 // @Success		200	{object}	dto.CreateUserOutputDTO
+// @Failure 500
+// @Failure 400
 // @Router			/register [post]
 func (h *UserHandler) RegisterHandler(ctx *gin.Context) {
 	payload := dto.CreateUserInputDTO{}
