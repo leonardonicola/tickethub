@@ -10,4 +10,5 @@ import (
 type EventRepository interface {
 	Create(event *domain.Event, poster *multipart.FileHeader) (*dto.CreateEventOutputDTO, error)
 	GetMany(search dto.GetManyEventsInputDTO) ([]dto.GetManyEventsOutputDTO, error)
+	GetById(id string) (*dto.GetEventByIdOutputDTO, error)
 }

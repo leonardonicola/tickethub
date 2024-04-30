@@ -9,7 +9,7 @@ type CreateEventInputDTO struct {
 	Date        string                `form:"date" validate:"required,datetime=2006-01-02"`
 	AgeRating   uint8                 `form:"age_rating" validate:"required,number,gte=1,lte=60"`
 	Poster      *multipart.FileHeader `form:"poster" validate:"required"`
-	GenreID     string                `form:"genre_id" validate:"required,gt=2,lt=50,uuid"`
+	GenreID     string                `form:"genre_id" validate:"required,uuid"`
 }
 
 type CreateEventOutputDTO struct {

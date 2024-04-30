@@ -55,7 +55,7 @@ func (repo *EventRepositoryImpl) Create(event *domain.Event, poster *multipart.F
 			return nil, err
 		}
 		logger.Errorf("EVENT(create) - no rows affected: %v", err)
-		return nil, fmt.Errorf("EVENT(create) - no rows affected: %v", err)
+		return nil, fmt.Errorf("Error while creating event: %v", err)
 	}
 	return &dto.CreateEventOutputDTO{
 		ID:          event.ID,
@@ -69,16 +69,31 @@ func (repo *EventRepositoryImpl) Create(event *domain.Event, poster *multipart.F
 	}, nil
 }
 
+func (repo *EventRepositoryImpl) GetById(id string) (*dto.GetEventByIdOutputDTO, error) {
+
+	var event dto.GetEventByIdOutputDTO
+	const sqlQuery = `
+	SELECT id, title, date, address, poster, created_at, updated_at	
+	FROM events
+	WHERE id = $1
+	LIMIT 1
+	`
+	row := repo.db.QueryRow(sqlQuery, id)
+	err := row.Scan(&event.ID, &event.Title, &event.Date, &event.Address, &event.Poster, &event.CreatedAt, &event.UpdatedAt)
+	if err != nil {
+		logger.Errorf("EVENT(get by id): %v", err)
+		return nil, fmt.Errorf("Evento inexistente")
+	}
+	return &event, nil
+}
+
 func (repo *EventRepositoryImpl) GetMany(query dto.GetManyEventsInputDTO) ([]dto.GetManyEventsOutputDTO, error) {
-
 	events := make([]dto.GetManyEventsOutputDTO, 0)
-
 	offset := (query.Page - 1) * query.Limit
-
 	// Pesquisa por eventos que contenham o titulo ou descrição com a query do usuario
 	// que vão acontecer no futuro
 	const sqlQuery = `
-		SELECT e.id, e.title, e.date, e.address, e.poster, g.name 
+		SELECT e.id, e.title, e.date, e.address, e.poster, g.name, e.created_at, e.updated_at
 		FROM events e 
 		INNER JOIN genres g
 		ON g.id = e.genre_id
@@ -90,19 +105,18 @@ func (repo *EventRepositoryImpl) GetMany(query dto.GetManyEventsInputDTO) ([]dto
 	`
 	// Execute the query with parameters
 	rows, err := repo.db.Query(sqlQuery, query.Search, query.Limit, offset)
-
 	if err != nil {
 		logger.Errorf("EVENT(get_many) query: %v", err)
-		return nil, fmt.Errorf("Error while querying events: %v", err)
+		return nil, fmt.Errorf("Error while getting events: %v", err)
 	}
 
 	for rows.Next() {
 		var event dto.GetManyEventsOutputDTO
 
 		if err := rows.Scan(&event.ID, &event.Title,
-			&event.Date, &event.Address, &event.Poster, &event.Genre); err != nil {
+			&event.Date, &event.Address, &event.Poster, &event.Genre, &event.CreatedAt, &event.UpdatedAt); err != nil {
 			logger.Errorf("EVENT(get_many) scan: %v", err)
-			return nil, fmt.Errorf("Error while reading events: %v", err)
+			return nil, fmt.Errorf("Error while getting events: %v", err)
 		}
 		events = append(events, event)
 	}
