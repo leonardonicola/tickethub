@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/leonardonicola/tickethub/config"
 	eventRoutes "github.com/leonardonicola/tickethub/internal/modules/event/route"
+	ticketRoutes "github.com/leonardonicola/tickethub/internal/modules/ticket/route"
 	userRoutes "github.com/leonardonicola/tickethub/internal/modules/user/route"
 	"github.com/leonardonicola/tickethub/internal/pkg/validation"
 	swaggerFiles "github.com/swaggo/files"
@@ -47,6 +48,7 @@ func InitRoutes() (*gin.Engine, error) {
 
 	userHandlers := userRoutes.SetupUserRoutes()
 	eventHandlers := eventRoutes.SetupEventRoutes()
+	ticketHandlers := ticketRoutes.SetupTicketRoutes()
 
 	v1 := router.Group(prefix)
 	v1.POST("/login", authMiddleware.LoginHandler)
@@ -57,8 +59,13 @@ func InitRoutes() (*gin.Engine, error) {
 	{
 		v1.GET("/refresh_token", authMiddleware.RefreshHandler)
 		v1.POST("/logout", authMiddleware.LogoutHandler)
+
+		// Event
 		v1.POST("/event", eventHandlers.CreateEventHandler)
 		v1.GET("/event", eventHandlers.GetManyHandler)
+
+		// Ticket
+		v1.POST("/ticket", ticketHandlers.CreateHandler)
 	}
 
 	return router, nil
