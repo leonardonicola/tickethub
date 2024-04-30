@@ -19,10 +19,10 @@ type Event struct {
 	Address     string
 	Date        string
 	AgeRating   uint8
-	Genre       string
+	GenreID     string
 }
 
-func NewEvent(title, description, address, date, genre string, agerating uint8) (*Event, error) {
+func NewEvent(title, description, address, date, genreId string, agerating uint8) (*Event, error) {
 	id := uuid.NewString()
 
 	if _, err := time.Parse("2006-01-02", date); err != nil {
@@ -34,7 +34,7 @@ func NewEvent(title, description, address, date, genre string, agerating uint8) 
 		Description: description,
 		Address:     address,
 		Date:        date,
-		Genre:       genre,
+		GenreID:     genreId,
 		AgeRating:   agerating,
 	}, nil
 }

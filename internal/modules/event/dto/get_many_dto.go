@@ -3,15 +3,15 @@ package dto
 type GetManyEventsInputDTO struct {
 	// Caso não passem descrição, é obrigatório passar título
 	Search string `form:"search" validate:"required"`
+	Limit  uint8  `form:"limit" validate:"required"`
+	Page   uint8  `form:"page" validate:"required"`
 }
 
 type GetManyEventsOutputDTO struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
-	Address     string `json:"address"`
-	Date        string `json:"date"`
-	AgeRating   uint8  `json:"age_rating"`
-	Poster      string `json:"poster_url"`
-	Genre       string `json:"genre"`
+	ID      string `json:"id"`
+	Title   string `json:"title"`
+	Address string `json:"address"`
+	Date    string `json:"date"`
+	Poster  string `json:"poster_url"`
+	Genre   string `json:"genre"`
 }
