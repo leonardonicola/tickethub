@@ -33,9 +33,15 @@ func (repo *EventRepositoryImpl) Create(event *domain.Event, poster *multipart.F
 		return nil, err
 	}
 
-	res, err := repo.db.Exec("INSERT INTO events VALUES ($1, $2, $3, $4, $5, $6, $7, $8)",
+	const sqlQuery = `
+		INSERT INTO events 
+		(id, title, description, address, date, age_rating, genre_id, poster) 
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+	`
+
+	res, err := repo.db.Exec(sqlQuery,
 		event.ID, event.Title, event.Description, event.Address, event.Date, event.AgeRating,
-		event.Genre, imageId.Identifier)
+		event.GenreID, imageId.Identifier)
 
 	if err != nil {
 		logger.Errorf("EVENT(create): %v", err)
@@ -59,7 +65,7 @@ func (repo *EventRepositoryImpl) Create(event *domain.Event, poster *multipart.F
 		Date:        event.Date,
 		AgeRating:   event.AgeRating,
 		Poster:      imageId.Identifier,
-		Genre:       event.Genre,
+		GenreID:     event.GenreID,
 	}, nil
 }
 
@@ -67,16 +73,23 @@ func (repo *EventRepositoryImpl) GetMany(query dto.GetManyEventsInputDTO) ([]dto
 
 	events := make([]dto.GetManyEventsOutputDTO, 0)
 
-	const sqlQuery = `
-	SELECT id, title, description, date, age_rating, address, poster, genre 
-	FROM events
-	WHERE title ILIKE '%' || $1 || '%'
-	ORDER BY id ASC
-	LIMIT 10
-	`
+	offset := (query.Page - 1) * query.Limit
 
+	// Pesquisa por eventos que contenham o titulo ou descrição com a query do usuario
+	// que vão acontecer no futuro
+	const sqlQuery = `
+		SELECT e.id, e.title, e.date, e.address, e.poster, g.name 
+		FROM events e 
+		INNER JOIN genres g
+		ON g.id = e.genre_id
+		WHERE e.date > NOW() 
+		AND unaccent(e.searchable) ILIKE '%' || unaccent($1) || '%'  
+		ORDER BY e.date ASC
+		LIMIT $2
+		OFFSET $3
+	`
 	// Execute the query with parameters
-	rows, err := repo.db.Query(sqlQuery, query.Search)
+	rows, err := repo.db.Query(sqlQuery, query.Search, query.Limit, offset)
 
 	if err != nil {
 		logger.Errorf("EVENT(get_many) query: %v", err)
@@ -86,8 +99,8 @@ func (repo *EventRepositoryImpl) GetMany(query dto.GetManyEventsInputDTO) ([]dto
 	for rows.Next() {
 		var event dto.GetManyEventsOutputDTO
 
-		if err := rows.Scan(&event.ID, &event.Title, &event.Description,
-			&event.Address, &event.Date, &event.AgeRating, &event.Genre, &event.Poster); err != nil {
+		if err := rows.Scan(&event.ID, &event.Title,
+			&event.Date, &event.Address, &event.Poster, &event.Genre); err != nil {
 			logger.Errorf("EVENT(get_many) scan: %v", err)
 			return nil, fmt.Errorf("Error while reading events: %v", err)
 		}
