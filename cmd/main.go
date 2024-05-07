@@ -7,6 +7,8 @@ import (
 	"github.com/leonardonicola/tickethub/config"
 	_ "github.com/leonardonicola/tickethub/docs"
 	"github.com/leonardonicola/tickethub/internal/pkg/router"
+	bucket "github.com/leonardonicola/tickethub/internal/pkg/s3"
+	gateway "github.com/leonardonicola/tickethub/internal/pkg/stripe"
 )
 
 //	@title			Tickethub
@@ -37,7 +39,11 @@ func main() {
 	}
 	// TODO: return error on intializations and give os.Exit(1)
 	config.InitDB()
-	config.InitS3Client()
+	bucket.InitS3Client()
+	if err := gateway.SetupStripe(); err != nil {
+		logger.Fatalf("STRIPE ERROR: %v", err)
+		os.Exit(1)
+	}
 	r, err := router.InitRoutes()
 	// Load godot to retrieve variables from .env
 	if err != nil {

@@ -1,4 +1,4 @@
-package config
+package bucket
 
 import (
 	"fmt"
@@ -8,10 +8,12 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/leonardonicola/tickethub/config"
 )
 
 var (
 	s3Client *s3.S3
+	logger   *config.Logger
 )
 
 func exitErrorf(msg string, args ...interface{}) {
@@ -20,6 +22,7 @@ func exitErrorf(msg string, args ...interface{}) {
 }
 
 func InitS3Client() {
+	logger = config.NewLogger()
 	access_key, found := os.LookupEnv("AWS_ACCESS_KEY")
 	if !found {
 		logger.Fatalf("AWS S3 - access key not found")
