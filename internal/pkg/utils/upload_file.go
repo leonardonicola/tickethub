@@ -9,12 +9,12 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/google/uuid"
-	"github.com/leonardonicola/tickethub/config"
+	bucket "github.com/leonardonicola/tickethub/internal/pkg/s3"
 )
 
-func UploadFileToBucket(bucket string, fileHeader *multipart.FileHeader) (*UploadedFile, error) {
+func UploadFileToBucket(bucketName string, fileHeader *multipart.FileHeader) (*UploadedFile, error) {
 
-	svc := config.GetS3Client()
+	svc := bucket.GetS3Client()
 	file, err := fileHeader.Open()
 
 	if err != nil {
@@ -35,7 +35,7 @@ func UploadFileToBucket(bucket string, fileHeader *multipart.FileHeader) (*Uploa
 	fileType := http.DetectContentType(buffer)
 	randomFilename := uuid.NewString()
 	_, err = svc.PutObject(&s3.PutObjectInput{
-		Bucket:      aws.String(bucket),
+		Bucket:      aws.String(bucketName),
 		Key:         aws.String(randomFilename),
 		Body:        fileBytes,
 		ContentType: aws.String(fileType),
