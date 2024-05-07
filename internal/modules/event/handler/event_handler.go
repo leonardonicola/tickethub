@@ -65,6 +65,8 @@ func (uc *EventHandler) CreateEventHandler(ctx *gin.Context) {
 // @Description Get events base on title search
 // @Tags event
 // @Param search query string true "Search"
+// @Param limit query uint8 true "Limit"
+// @Param page query uint8 true "Page"
 // @Produce json
 // @SecurityDefinitions.apikey JWT
 // @Success 200 {array} dto.GetManyEventsOutputDTO
