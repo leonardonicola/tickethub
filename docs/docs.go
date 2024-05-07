@@ -36,6 +36,20 @@ const docTemplate = `{
                         "name": "search",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page",
+                        "name": "page",
+                        "in": "query",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -106,6 +120,29 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/ticket": {
+            "post": {
+                "description": "Create an ticket",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "ticket"
+                ],
+                "summary": "Create ticket",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.CreateTicketInputDTO"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -124,7 +161,7 @@ const docTemplate = `{
                 "description": {
                     "type": "string"
                 },
-                "genre": {
+                "genre_id": {
                     "type": "string"
                 },
                 "id": {
@@ -135,6 +172,40 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.CreateTicketInputDTO": {
+            "type": "object",
+            "required": [
+                "description",
+                "event_id",
+                "max_per_user",
+                "name",
+                "price",
+                "total_qty"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "event_id": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "max_per_user": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "total_qty": {
+                    "type": "integer"
                 }
             }
         },
@@ -167,13 +238,10 @@ const docTemplate = `{
                 "address": {
                     "type": "string"
                 },
-                "age_rating": {
-                    "type": "integer"
-                },
-                "date": {
+                "created_at": {
                     "type": "string"
                 },
-                "description": {
+                "date": {
                     "type": "string"
                 },
                 "genre": {
@@ -186,6 +254,9 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "title": {
+                    "type": "string"
+                },
+                "updated_at": {
                     "type": "string"
                 }
             }

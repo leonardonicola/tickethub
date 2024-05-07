@@ -10,7 +10,7 @@ definitions:
         type: string
       description:
         type: string
-      genre:
+      genre_id:
         type: string
       id:
         type: string
@@ -18,6 +18,30 @@ definitions:
         type: string
       title:
         type: string
+    type: object
+  dto.CreateTicketInputDTO:
+    properties:
+      description:
+        type: string
+      event_id:
+        type: string
+      id:
+        type: string
+      max_per_user:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      total_qty:
+        type: integer
+    required:
+    - description
+    - event_id
+    - max_per_user
+    - name
+    - price
+    - total_qty
     type: object
   dto.CreateUserOutputDTO:
     properties:
@@ -38,11 +62,9 @@ definitions:
     properties:
       address:
         type: string
-      age_rating:
-        type: integer
-      date:
+      created_at:
         type: string
-      description:
+      date:
         type: string
       genre:
         type: string
@@ -51,6 +73,8 @@ definitions:
       poster_url:
         type: string
       title:
+        type: string
+      updated_at:
         type: string
     type: object
 externalDocs:
@@ -75,6 +99,16 @@ paths:
         name: search
         required: true
         type: string
+      - description: Limit
+        in: query
+        name: limit
+        required: true
+        type: integer
+      - description: Page
+        in: query
+        name: page
+        required: true
+        type: integer
       produces:
       - application/json
       responses:
@@ -124,6 +158,21 @@ paths:
       summary: Register
       tags:
       - auth
+  /ticket:
+    post:
+      consumes:
+      - application/json
+      description: Create an ticket
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.CreateTicketInputDTO'
+      summary: Create ticket
+      tags:
+      - ticket
 securityDefinitions:
   JWT:
     in: header
