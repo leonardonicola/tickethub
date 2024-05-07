@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
 	"github.com/leonardonicola/tickethub/config"
@@ -23,6 +24,30 @@ func NewTicketRepository(db *sql.DB) *TicketRepositoryImpl {
 	return &TicketRepositoryImpl{
 		DB: db,
 	}
+}
+
+func (repo *TicketRepositoryImpl) CreateTicketProduct(ticketProd *dto.TicketProduct) error {
+	const sqlQuery = `
+		INSERT INTO stripe_tickets
+		(id, ticket_id, price_id, name, description)	
+		VALUES ($1, $2, $3, $4, $5)
+	`
+
+	res, err := repo.DB.Exec(sqlQuery, ticketProd.StripeID,
+		ticketProd.TicketID, ticketProd.PriceID, ticketProd.Name, ticketProd.Description)
+
+	if err != nil {
+		logger.Errorf("STRIPE_TICKET(create): %v", err)
+		return fmt.Errorf("Erro ao criar stripe ticket: %v", err)
+	}
+
+	rows, _ := res.RowsAffected()
+	if rows == 0 {
+		logger.Error("STRIPE_TICKET(create): no rows affected")
+		return errors.New("Nenhum linha afetada ao criar stripe ticket")
+	}
+
+	return nil
 }
 
 func (repo *TicketRepositoryImpl) Create(ticket *domain.Ticket) (*dto.CreateTicketOutputDTO, error) {

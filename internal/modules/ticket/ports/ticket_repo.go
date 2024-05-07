@@ -7,4 +7,5 @@ import (
 
 type TicketRepository interface {
 	Create(*domain.Ticket) (*dto.CreateTicketOutputDTO, error)
+	CreateTicketProduct(*dto.TicketProduct) error
 }
