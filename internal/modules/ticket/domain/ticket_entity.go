@@ -3,14 +3,14 @@ package domain
 type Ticket struct {
 	ID          string
 	Name        string
-	Price       float32
+	Price       int64
 	TotalQty    uint32
 	Description string
 	MaxPerUser  uint16
 	EventId     string
 }
 
-func NewTicket(id, name, description, eventId string, price float32,
+func NewTicket(id, name, description, eventId string, price int64,
 	maxPerUser uint16, totalQty uint32) *Ticket {
 
 	return &Ticket{
