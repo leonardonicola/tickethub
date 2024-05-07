@@ -25,6 +25,14 @@ func NewTicketHandler(createUc usecase.CreateTicketUseCase) *TicketHandler {
 	}
 }
 
+// @Summary Create ticket
+// @Description	Create an ticket
+// @Tags ticket
+// @Accept json
+// @Produce json
+// @SecurityDefinitions.apikey JWT
+// @Success 200 {object} dto.CreateTicketInputDTO
+// @Router /ticket [post]
 func (h *TicketHandler) CreateHandler(ctx *gin.Context) {
 	var payload dto.CreateTicketInputDTO
 
