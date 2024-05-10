@@ -8,7 +8,7 @@ import (
 	"github.com/leonardonicola/tickethub/config"
 	"github.com/leonardonicola/tickethub/internal/modules/event/domain"
 	"github.com/leonardonicola/tickethub/internal/modules/event/dto"
-	utils "github.com/leonardonicola/tickethub/internal/pkg/utils"
+	bucket "github.com/leonardonicola/tickethub/internal/pkg/s3"
 )
 
 type EventRepositoryImpl struct {
@@ -27,7 +27,7 @@ func NewEventRepository(db *sql.DB) *EventRepositoryImpl {
 }
 
 func (repo *EventRepositoryImpl) Create(event *domain.Event, poster *multipart.FileHeader) (*dto.CreateEventOutputDTO, error) {
-	imageId, err := utils.UploadFileToBucket("tickethub", poster)
+	imageId, err := bucket.UploadFileToBucket("tickethub", poster)
 
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func (repo *EventRepositoryImpl) Create(event *domain.Event, poster *multipart.F
 	rows, _ := res.RowsAffected()
 	if rows == 0 {
 		// Rollback on image insertion
-		if err := utils.DeleteObjectFromBucket("tickethub", imageId.Identifier); err != nil {
+		if err := bucket.DeleteObjectFromBucket("tickethub", imageId.Identifier); err != nil {
 			return nil, err
 		}
 		logger.Errorf("EVENT(create) - no rows affected: %v", err)
