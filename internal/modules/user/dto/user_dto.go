@@ -18,6 +18,18 @@ type CreateUserOutputDTO struct {
 	CPF     string
 }
 
+type GetUserOutputDTO struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Surname   string `json:"surname"`
+	Email     string `json:"email"`
+	Address   string `json:"address"`
+	CPF       string `json:"cpf"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	DeletedAt string `json:"deleted_at"`
+}
+
 type Login struct {
 	Email    string `validate:"required,email"`
 	Password string `validate:"required"`
