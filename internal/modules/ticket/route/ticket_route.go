@@ -23,6 +23,9 @@ func SetupTicketRoutes() *handler.TicketHandler {
 		GetEventByIdUseCase: *getEventById,
 		PaymentGateway:      stripeGateway,
 	}
-	ticketHandler := handler.NewTicketHandler(*createUc)
+	updateUc := &usecase.UpdateAvailableQuantityUseCase{
+		TicketRepository: ticketRepo,
+	}
+	ticketHandler := handler.NewTicketHandler(createUc, updateUc)
 	return ticketHandler
 }

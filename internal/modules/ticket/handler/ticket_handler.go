@@ -15,13 +15,15 @@ var (
 )
 
 type TicketHandler struct {
-	CreateTicketUseCase *usecase.CreateTicketUseCase
+	CreateTicketUseCase            *usecase.CreateTicketUseCase
+	UpdateAvailableQuantityUseCase *usecase.UpdateAvailableQuantityUseCase
 }
 
-func NewTicketHandler(createUc usecase.CreateTicketUseCase) *TicketHandler {
+func NewTicketHandler(createUc *usecase.CreateTicketUseCase, updateAvlbQty *usecase.UpdateAvailableQuantityUseCase) *TicketHandler {
 	logger = config.NewLogger()
 	return &TicketHandler{
-		CreateTicketUseCase: &createUc,
+		CreateTicketUseCase:            createUc,
+		UpdateAvailableQuantityUseCase: updateAvlbQty,
 	}
 }
 
@@ -38,7 +40,7 @@ func (h *TicketHandler) CreateHandler(ctx *gin.Context) {
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"message": "Corpo inválido",
+			"message": err.Error(),
 		})
 		return
 	}
@@ -46,7 +48,7 @@ func (h *TicketHandler) CreateHandler(ctx *gin.Context) {
 	errs := validation.Validate(payload)
 
 	if errs != nil {
-		ctx.AbortWithStatusJSON(http.StatusNotAcceptable, errs)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, errs)
 		return
 	}
 
