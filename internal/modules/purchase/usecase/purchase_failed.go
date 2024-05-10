@@ -7,13 +7,13 @@ import (
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/enum"
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/ports"
 	"github.com/leonardonicola/tickethub/internal/modules/ticket/dto"
-	"github.com/leonardonicola/tickethub/internal/modules/ticket/usecase"
+	ticketPort "github.com/leonardonicola/tickethub/internal/modules/ticket/ports"
 	"github.com/stripe/stripe-go/v78"
 )
 
 type PurchaseFailedUseCase struct {
-	PurchaseRepository             ports.PurchaseRepository
-	UpdateAvailableQuantityUseCase *usecase.UpdateAvailableQuantityUseCase
+	PurchaseRepository ports.PurchaseRepository
+	TicketRepository   ticketPort.TicketRepository
 }
 
 // Devolve available_qty para o ticket e muda status do purchase para failed
@@ -42,7 +42,7 @@ func (uc *PurchaseFailedUseCase) Execute(session stripe.CheckoutSession) error {
 				Type:     "increment",
 			}
 			// Devolve os tickets reservados temporariamente
-			err := uc.UpdateAvailableQuantityUseCase.Execute(payload)
+			err := uc.TicketRepository.UpdateAvailableQuantity(payload)
 			if err != nil {
 				errors <- err
 				return

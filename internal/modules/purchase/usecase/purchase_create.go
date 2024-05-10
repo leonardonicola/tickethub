@@ -6,28 +6,26 @@ import (
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/dto"
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/enum"
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/ports"
-	ticket "github.com/leonardonicola/tickethub/internal/modules/ticket/dto"
-	"github.com/leonardonicola/tickethub/internal/modules/ticket/usecase"
-	userUc "github.com/leonardonicola/tickethub/internal/modules/user/usecase"
+	ticketDTO "github.com/leonardonicola/tickethub/internal/modules/ticket/dto"
+	ticketPort "github.com/leonardonicola/tickethub/internal/modules/ticket/ports"
+	userPort "github.com/leonardonicola/tickethub/internal/modules/user/ports"
 )
 
 type PurchaseCreateUseCase struct {
-	PurchaseRepository             ports.PurchaseRepository
-	UpdateAvailableQuantityUseCase *usecase.UpdateAvailableQuantityUseCase
-	GetTicketByIdUseCase           *usecase.GetTicketByIdUseCase
-	GetUserByIdUseCase             *userUc.GetUserByIdUseCase
-	GetTicketProductUseCase        *usecase.GetTicketProductUseCase
-	PaymentGateway                 ports.PaymentGateway
+	PurchaseRepository ports.PurchaseRepository
+	TicketRepository   ticketPort.TicketRepository
+	UserRepository     userPort.UserRepository
+	PaymentGateway     ports.PaymentGateway
 }
 
 // TODO: criar purchase, reduzir available qty do ticket
 func (uc *PurchaseCreateUseCase) Execute(dto *dto.CreatePurchaseDTO) (string, error) {
 
-	if _, err := uc.GetUserByIdUseCase.Execute(dto.UserID); err != nil {
+	if _, err := uc.UserRepository.GetById(dto.UserID); err != nil {
 		return "", err
 	}
 
-	if _, err := uc.GetTicketByIdUseCase.Execute(dto.TicketID); err != nil {
+	if _, err := uc.TicketRepository.GetTicketById(dto.TicketID); err != nil {
 		return "", err
 	}
 
@@ -44,25 +42,25 @@ func (uc *PurchaseCreateUseCase) Execute(dto *dto.CreatePurchaseDTO) (string, er
 		return "", err
 	}
 
-	payload := &ticket.UpdateTicketAvailableQtyInputDTO{
+	payload := &ticketDTO.UpdateTicketAvailableQtyInputDTO{
 		ID:       dto.TicketID,
 		Quantity: dto.Quantity,
 		Type:     "decrement",
 	}
 	// Reserva quantidades temporariamente
-	err = uc.UpdateAvailableQuantityUseCase.Execute(payload)
+	err = uc.TicketRepository.UpdateAvailableQuantity(payload)
 	if err != nil {
 		return "", err
 	}
 
-	ticketProduct, err := uc.GetTicketProductUseCase.Execute(dto.TicketID)
+	ticketProduct, err := uc.TicketRepository.GetProductByTicketId(dto.TicketID)
 
 	if err != nil {
 		return "", err
 	}
 
-	tickets := []*ticket.CreatePaymentDTO{
-		&ticket.CreatePaymentDTO{
+	tickets := []*ticketDTO.CreatePaymentDTO{
+		&ticketDTO.CreatePaymentDTO{
 			StripeID: ticketProduct.StripeID,
 			PriceID:  ticketProduct.PriceID,
 			Quantity: dto.Quantity,

@@ -2,22 +2,22 @@ package usecase
 
 import (
 	"github.com/google/uuid"
-	"github.com/leonardonicola/tickethub/internal/modules/event/usecase"
+	eventPorts "github.com/leonardonicola/tickethub/internal/modules/event/ports"
 	"github.com/leonardonicola/tickethub/internal/modules/ticket/domain"
 	"github.com/leonardonicola/tickethub/internal/modules/ticket/dto"
 	"github.com/leonardonicola/tickethub/internal/modules/ticket/ports"
 )
 
 type CreateTicketUseCase struct {
-	TicketRepository    ports.TicketRepository
-	GetEventByIdUseCase usecase.GetEventByIdUseCase
+	TicketRepository ports.TicketRepository
+	EventRepository  eventPorts.EventRepository
 	// Injecting stripe (external dependecy) on the usecase is not good practice
 	PaymentGateway ports.TicketPaymentGateway[*dto.CreateTicketOutputDTO, *dto.TicketProduct]
 }
 
 func (uc *CreateTicketUseCase) Execute(payload *dto.CreateTicketInputDTO) (*dto.CreateTicketOutputDTO, error) {
 
-	if _, err := uc.GetEventByIdUseCase.Execute(payload.EventId); err != nil {
+	if _, err := uc.EventRepository.GetById(payload.EventId); err != nil {
 		return nil, err
 	}
 

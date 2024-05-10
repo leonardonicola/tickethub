@@ -9,13 +9,13 @@ type GetTicketProductUseCase struct {
 	TicketRepository ports.TicketRepository
 }
 
-type GetTicketByIdUseCase struct {
+type GetTicketUseCase struct {
 	TicketRepository ports.TicketRepository
 }
 
 func (uc *GetTicketProductUseCase) Execute(id string) (*dto.TicketProduct, error) {
 	return uc.TicketRepository.GetProductByTicketId(id)
 }
-func (uc *GetTicketByIdUseCase) Execute(id string) (*dto.GetTicketByIdDTO, error) {
+func (uc *GetTicketUseCase) Execute(id string) (*dto.GetTicketDTO, error) {
 	return uc.TicketRepository.GetTicketById(id)
 }

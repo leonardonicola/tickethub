@@ -82,8 +82,8 @@ func (repo *TicketRepositoryImpl) Create(ticket *domain.Ticket) (*dto.CreateTick
 	}, nil
 }
 
-func (repo *TicketRepositoryImpl) GetTicketById(id string) (*dto.GetTicketByIdDTO, error) {
-	var ticket dto.GetTicketByIdDTO
+func (repo *TicketRepositoryImpl) GetTicketById(id string) (*dto.GetTicketDTO, error) {
+	var ticket dto.GetTicketDTO
 
 	const sqlQuery = `
 	SELECT id, name, price, total_qty, available_qty, description, max_per_user, event_id

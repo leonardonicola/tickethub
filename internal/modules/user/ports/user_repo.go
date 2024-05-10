@@ -8,6 +8,4 @@ import (
 type UserRepository interface {
 	Create(user *domain.User) (*domain.User, error)
 	GetById(id string) (*dto.GetUserOutputDTO, error)
-	// Delete(id string) bool
-	// Update(user *domain.User) (*domain.User, error)
 }

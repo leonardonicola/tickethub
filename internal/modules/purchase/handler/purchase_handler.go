@@ -10,8 +10,6 @@ import (
 	"github.com/leonardonicola/tickethub/config"
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/dto"
 	"github.com/leonardonicola/tickethub/internal/modules/purchase/usecase"
-	ticketUc "github.com/leonardonicola/tickethub/internal/modules/ticket/usecase"
-	userUc "github.com/leonardonicola/tickethub/internal/modules/user/usecase"
 	"github.com/leonardonicola/tickethub/internal/pkg/validation"
 	"github.com/stripe/stripe-go/v78"
 	"github.com/stripe/stripe-go/v78/webhook"
@@ -21,8 +19,6 @@ type PurchaseHandler struct {
 	PurchaseFailedUseCase *usecase.PurchaseFailedUseCase
 	// PurchaseSucceededUseCase *usecase.PurchaseSucceededUseCase
 	PurchaseCreateUseCase *usecase.PurchaseCreateUseCase
-	GetTicketByIdUseCase  *ticketUc.GetTicketByIdUseCase
-	GetUserByIdUseCase    *userUc.GetUserByIdUseCase
 }
 
 var (
@@ -31,19 +27,13 @@ var (
 )
 
 func NewPurchaseHandler(purchaseFailedUc *usecase.PurchaseFailedUseCase,
-	// purchaseSucceededUc *usecase.PurchaseSucceededUseCase,
-	purchaseCreateUc *usecase.PurchaseCreateUseCase,
-	getTicketByIdUc *ticketUc.GetTicketByIdUseCase,
-	getUserByIdUc *userUc.GetUserByIdUseCase) *PurchaseHandler {
+	purchaseCreateUc *usecase.PurchaseCreateUseCase) *PurchaseHandler {
 
 	stripeWebhookKey = os.Getenv("STRIPE_WEBHOOK_KEY")
 	logger = config.NewLogger()
 	return &PurchaseHandler{
 		PurchaseFailedUseCase: purchaseFailedUc,
-		// PurchaseSucceededUseCase: purchaseSucceededUc,
 		PurchaseCreateUseCase: purchaseCreateUc,
-		GetTicketByIdUseCase:  getTicketByIdUc,
-		GetUserByIdUseCase:    getUserByIdUc,
 	}
 }
 

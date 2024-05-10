@@ -10,5 +10,5 @@ type TicketRepository interface {
 	CreateTicketProduct(*dto.TicketProduct) error
 	UpdateAvailableQuantity(*dto.UpdateTicketAvailableQtyInputDTO) error
 	GetProductByTicketId(id string) (*dto.TicketProduct, error)
-	GetTicketById(id string) (*dto.GetTicketByIdDTO, error)
+	GetTicketById(id string) (*dto.GetTicketDTO, error)
 }
