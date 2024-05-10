@@ -1,4 +1,4 @@
-CREATE TYPE payment_status AS ENUM ('succeeded','processing', 'canceled');
+CREATE TYPE payment_status AS ENUM ('succeeded','processing', 'canceled', 'failed');
 CREATE TABLE IF NOT EXISTS purchase(
   id uuid primary key not null,
   ticket_id uuid references tickets(id),

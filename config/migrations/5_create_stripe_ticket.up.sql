@@ -4,4 +4,4 @@ CREATE TABLE IF NOT EXISTS stripe_ticket (
   ticket_id uuid references tickets(id),
   name varchar(150) not null,
   description text
-):
+);

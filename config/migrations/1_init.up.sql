@@ -3,9 +3,9 @@ CREATE TABLE IF NOT EXISTS users (
   name varchar(100) not null,
   surname varchar(100) not null,
   address varchar(250) not null,
-  stripe_account_id varchar(150),
   email varchar(200) not null unique,
   password varchar(250) not null,
+  stripe_account_id varchar(150),
   created_at timestamp default now(),
   updated_at timestamp default now(),
   deleted_at timestamp
