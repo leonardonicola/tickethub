@@ -35,7 +35,7 @@ func NewUserHandler(regUc usecase.RegisterUseCase) *UserHandler {
 // @Failure 400
 // @Router			/register [post]
 func (h *UserHandler) RegisterHandler(ctx *gin.Context) {
-	payload := dto.CreateUserInputDTO{}
+	var payload dto.CreateUserInputDTO
 	if err := ctx.BindJSON(&payload); err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, err.Error())
 		return
@@ -45,7 +45,7 @@ func (h *UserHandler) RegisterHandler(ctx *gin.Context) {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, errs)
 		return
 	}
-	user, err := h.RegisterUseCase.Execute(payload)
+	user, err := h.RegisterUseCase.Execute(&payload)
 	if err != nil {
 		logger.Errorf("register db error: %v", err)
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{

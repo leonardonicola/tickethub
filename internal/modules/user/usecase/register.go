@@ -10,7 +10,7 @@ type RegisterUseCase struct {
 	Repository ports.UserRepository
 }
 
-func (uc *RegisterUseCase) Execute(payload dto.CreateUserInputDTO) (*dto.CreateUserOutputDTO, error) {
+func (uc *RegisterUseCase) Execute(payload *dto.CreateUserInputDTO) (*dto.CreateUserOutputDTO, error) {
 	user := domain.NewUser(payload.Name, payload.Surname, payload.Email, payload.Address, payload.CPF, payload.Password)
 
 	newUser, err := uc.Repository.Create(user)
