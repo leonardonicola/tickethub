@@ -46,7 +46,7 @@ func (uc *EventHandler) CreateEventHandler(ctx *gin.Context) {
 
 	if errs != nil {
 		logger.Errorf("EVENT(create) handler: %v", errs)
-		ctx.AbortWithStatusJSON(http.StatusNotAcceptable, errs)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, errs)
 		return
 	}
 	event, err := uc.CreateEventUseCase.Execute(payload)
@@ -76,7 +76,7 @@ func (uc *EventHandler) CreateEventHandler(ctx *gin.Context) {
 func (uc *EventHandler) GetManyHandler(ctx *gin.Context) {
 	var query dto.GetManyEventsInputDTO
 	if err := ctx.BindQuery(&query); err != nil {
-		ctx.AbortWithStatusJSON(http.StatusNotAcceptable, gin.H{
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, gin.H{
 			"message": err.Error(),
 		})
 		return
@@ -86,7 +86,7 @@ func (uc *EventHandler) GetManyHandler(ctx *gin.Context) {
 
 	if errs != nil {
 		logger.Errorf("EVENT(create) handler: %v", errs)
-		ctx.AbortWithStatusJSON(http.StatusNotAcceptable, errs)
+		ctx.AbortWithStatusJSON(http.StatusUnprocessableEntity, errs)
 		return
 	}
 
