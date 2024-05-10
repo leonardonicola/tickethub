@@ -127,22 +127,24 @@ func (s *StripeGateway) GetProduct(id string) (*dto.TicketProduct, error) {
 	}, nil
 }
 
-func (s *StripeGateway) CreatePaymentLink(tickets []*ticketDTO.CreatePaymentDTO) (*stripe.PaymentLink, error) {
-	params := &stripe.PaymentLinkParams{}
+func (s *StripeGateway) CreatePaymentLink(tickets []*ticketDTO.CreatePaymentDTO, metadata map[string]string) (string, error) {
+	params := &stripe.PaymentLinkParams{
+		Metadata:  metadata,
+		LineItems: []*stripe.PaymentLinkLineItemParams{},
+	}
 
 	for _, ticket := range tickets {
 		stripeProduct := &stripe.PaymentLinkLineItemParams{
 			Price:    stripe.String(ticket.PriceID),
 			Quantity: stripe.Int64(ticket.Quantity),
-			ID:       stripe.String(ticket.StripeID),
 		}
 		params.LineItems = append(params.LineItems, stripeProduct)
 	}
 	res, err := paymentlink.New(params)
 	if err != nil {
-		logger.Errorf("Error while creating STRIPE payment link: %v", err)
-		return nil, HandleStripeErrors(err)
+		// logger.Errorf("Error while creating STRIPE payment link: %v", err)
+		return "", HandleStripeErrors(err)
 	}
 
-	return res, nil
+	return res.URL, nil
 }
